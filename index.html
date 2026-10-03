@@ -1,1 +1,1694 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Legends — Футбольная Энциклопедия</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        fgreen: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#0f5132',
+                            950: '#022c22',
+                        },
+                        wiki: {
+                            bg: '#f8f9fa',
+                            card: '#ffffff',
+                            border: '#a2a9b1',
+                            lightborder: '#eaecf0',
+                            accent: '#0f5132'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0f5132;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
 
+        /* Wikipedia Infobox subtle pattern */
+        .wiki-infobox {
+            box-shadow: 0 4px 20px -2px rgba(15, 81, 50, 0.08);
+            border-top: 4px solid #0f5132;
+        }
+
+        .dark .wiki-infobox {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+            border-top: 4px solid #10b981;
+        }
+
+        .page-transition {
+            transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+        }
+
+        .img-placeholder-bg {
+            background: linear-gradient(135deg, #0f5132 0%, #065f46 50%, #022c22 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200 min-h-screen flex flex-col selection:bg-fgreen-500 selection:text-white">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-40 bg-fgreen-900 text-white shadow-lg border-b border-fgreen-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                
+                <!-- Logo & Brand -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-white text-fgreen-900 rounded-full flex items-center justify-center font-bold text-xl shadow-md border-2 border-fgreen-200">
+                        <i class="fa-solid fa-futbol text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl md:text-2xl font-extrabold tracking-tight font-serif text-white block leading-none">
+                            Football<span class="text-fgreen-200">Legends</span>
+                        </span>
+                        <span class="text-[10px] tracking-widest uppercase text-fgreen-200 font-semibold hidden sm:block">
+                            Мировая Футбольная Энциклопедия
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Desktop Search Bar -->
+                <div class="hidden md:flex flex-1 max-w-md mx-8 relative">
+                    <div class="relative w-full">
+                        <input type="text" id="globalSearchInput" 
+                            placeholder="Поиск футболиста, клуба или страны..." 
+                            class="w-full pl-10 pr-10 py-2 rounded-full bg-fgreen-950/60 border border-fgreen-700/60 text-white placeholder-fgreen-200/70 focus:outline-none focus:ring-2 focus:ring-fgreen-200 focus:bg-fgreen-950 text-sm transition-all"
+                            oninput="handleGlobalSearch(this.value)"
+                            onfocus="handleGlobalSearch(this.value)">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-fgreen-200 text-sm"></i>
+                        <button id="clearSearchBtn" class="hidden absolute right-3 top-2.5 text-fgreen-200 hover:text-white text-sm" onclick="clearSearch()">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <!-- Search Quick Suggestions Dropdown -->
+                    <div id="searchSuggestions" class="hidden absolute left-0 right-0 top-full mt-2 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 max-h-96 overflow-y-auto z-50 divide-y divide-gray-100 dark:divide-slate-700 text-slate-800 dark:text-slate-100">
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Menu -->
+                <nav class="hidden lg:flex items-center space-x-1 font-medium text-sm">
+                    <button onclick="navigateTo('home')" class="nav-btn px-3 py-2 rounded-lg hover:bg-fgreen-800 text-fgreen-100 hover:text-white transition-colors" data-page="home">
+                        <i class="fa-solid fa-house mr-1.5 opacity-80"></i>Главная
+                    </button>
+                    <button onclick="navigateTo('players')" class="nav-btn px-3 py-2 rounded-lg hover:bg-fgreen-800 text-fgreen-100 hover:text-white transition-colors" data-page="players">
+                        <i class="fa-solid fa-users mr-1.5 opacity-80"></i>Футболисты
+                    </button>
+                    <button onclick="navigateTo('clubs')" class="nav-btn px-3 py-2 rounded-lg hover:bg-fgreen-800 text-fgreen-100 hover:text-white transition-colors" data-page="clubs">
+                        <i class="fa-solid fa-shield-halved mr-1.5 opacity-80"></i>Клубы
+                    </button>
+                    <button onclick="navigateTo('teams')" class="nav-btn px-3 py-2 rounded-lg hover:bg-fgreen-800 text-fgreen-100 hover:text-white transition-colors" data-page="teams">
+                        <i class="fa-solid fa-flag mr-1.5 opacity-80"></i>Сборные
+                    </button>
+                    <button onclick="navigateTo('about')" class="nav-btn px-3 py-2 rounded-lg hover:bg-fgreen-800 text-fgreen-100 hover:text-white transition-colors" data-page="about">
+                        <i class="fa-solid fa-circle-info mr-1.5 opacity-80"></i>О сайте
+                    </button>
+                </nav>
+
+                <!-- Actions: Theme Switcher & Mobile Menu Trigger -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleTheme()" class="p-2.5 rounded-full bg-fgreen-800 text-fgreen-100 hover:text-white hover:bg-fgreen-700 transition-colors focus:outline-none" title="Переключить тему">
+                        <i class="fa-solid fa-moon dark:hidden text-lg"></i>
+                        <i class="fa-solid fa-sun hidden dark:block text-lg text-amber-300"></i>
+                    </button>
+
+                    <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg text-fgreen-100 hover:text-white hover:bg-fgreen-800 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl" id="menuOpenIcon"></i>
+                        <i class="fa-solid fa-xmark text-xl hidden" id="menuCloseIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Search Bar (under main header on smaller screens) -->
+        <div class="md:hidden px-4 pb-3">
+            <div class="relative">
+                <input type="text" id="mobileSearchInput" 
+                    placeholder="Поиск легенд футбола..." 
+                    class="w-full pl-9 pr-8 py-2 rounded-lg bg-fgreen-950/80 border border-fgreen-700 text-white placeholder-fgreen-200/70 text-sm"
+                    oninput="handleGlobalSearch(this.value)">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-fgreen-200 text-xs"></i>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Navigation -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-fgreen-950 border-t border-fgreen-800 px-4 pt-2 pb-6 space-y-1">
+            <button onclick="navigateTo('home'); toggleMobileMenu();" class="block w-full text-left px-3 py-2.5 rounded-lg text-white hover:bg-fgreen-800 font-medium">
+                <i class="fa-solid fa-house w-6 text-fgreen-200"></i> Главная
+            </button>
+            <button onclick="navigateTo('players'); toggleMobileMenu();" class="block w-full text-left px-3 py-2.5 rounded-lg text-white hover:bg-fgreen-800 font-medium">
+                <i class="fa-solid fa-users w-6 text-fgreen-200"></i> Футболисты
+            </button>
+            <button onclick="navigateTo('clubs'); toggleMobileMenu();" class="block w-full text-left px-3 py-2.5 rounded-lg text-white hover:bg-fgreen-800 font-medium">
+                <i class="fa-solid fa-shield-halved w-6 text-fgreen-200"></i> Клубы
+            </button>
+            <button onclick="navigateTo('teams'); toggleMobileMenu();" class="block w-full text-left px-3 py-2.5 rounded-lg text-white hover:bg-fgreen-800 font-medium">
+                <i class="fa-solid fa-flag w-6 text-fgreen-200"></i> Сборные
+            </button>
+            <button onclick="navigateTo('about'); toggleMobileMenu();" class="block w-full text-left px-3 py-2.5 rounded-lg text-white hover:bg-fgreen-800 font-medium">
+                <i class="fa-solid fa-circle-info w-6 text-fgreen-200"></i> О сайте
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER WITH DYNAMIC PAGES -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        
+        <!-- VIEW: HOME -->
+        <section id="view-home" class="page-view space-y-10">
+            <!-- Hero Banner -->
+            <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-fgreen-950 via-fgreen-900 to-fgreen-800 text-white p-8 md:p-12 shadow-xl border border-fgreen-700/50">
+                <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+                    <i class="fa-solid fa-trophy text-[280px]"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-fgreen-500/20 text-fgreen-200 text-xs font-semibold uppercase tracking-wider mb-4 border border-fgreen-400/30">
+                        <i class="fa-solid fa-award text-amber-400"></i> Онлайн-энциклопедия
+                    </span>
+                    <h1 class="text-3xl md:text-5xl font-extrabold font-serif tracking-tight leading-tight mb-4">
+                        Лучшие футболисты в истории футбола
+                    </h1>
+                    <p class="text-fgreen-100 text-base md:text-lg mb-8 leading-relaxed font-light">
+                        Исследуйте подробные биографии, карьерную статистику, списки трофеев и уникальные факты о величайших игроках всех времён в современном энциклопедическом формате.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="navigateTo('players')" class="px-6 py-3 rounded-xl bg-white text-fgreen-900 hover:bg-fgreen-100 font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-users"></i> Каталог легенд
+                        </button>
+                        <button onclick="showRandomPlayer()" class="px-6 py-3 rounded-xl bg-fgreen-800/80 hover:bg-fgreen-700 text-white font-medium border border-fgreen-600 transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-shuffle"></i> Случайная легенда
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wikipedia Style Notice Banner -->
+            <div class="bg-white dark:bg-slate-800 border-l-4 border-fgreen-700 dark:border-fgreen-500 p-4 md:p-5 rounded-r-xl shadow-sm text-sm text-slate-600 dark:text-slate-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-book-open text-2xl text-fgreen-700 dark:text-fgreen-400 shrink-0"></i>
+                    <div>
+                        <span class="font-semibold text-slate-800 dark:text-white">База данных постоянных обновлений:</span> Все статистические показатели и титулы верифицированы согласно международным футбольным архивам.
+                    </div>
+                </div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                    12 избранных легенд • 60+ трофеев
+                </div>
+            </div>
+
+            <!-- Featured Section Header -->
+            <div class="flex items-center justify-between border-b border-gray-200 dark:border-slate-700 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold font-serif text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-star text-amber-500"></i> Галерея Футбольных Легенд
+                    </h2>
+                    <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">Выберите игрока для ознакомления с подробной энциклопедической картой</p>
+                </div>
+                <button onclick="navigateTo('players')" class="text-sm font-semibold text-fgreen-800 dark:text-fgreen-400 hover:underline flex items-center gap-1">
+                    Смотреть всех <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Dynamic Player Cards Grid (Featured 12) -->
+            <div id="homePlayerGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- JS Populated Player Cards -->
+            </div>
+        </section>
+
+        <!-- VIEW: PLAYERS CATALOG & FILTERS -->
+        <section id="view-players" class="page-view hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold font-serif text-slate-900 dark:text-white">Каталог футболистов</h1>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Используйте фильтры для поиска великих игроков по позициям, странам и эпохам</p>
+                    </div>
+                    <button onclick="resetFilters()" class="text-xs font-medium text-fgreen-700 dark:text-fgreen-400 hover:underline self-start md:self-auto flex items-center gap-1">
+                        <i class="fa-solid fa-rotate-left"></i> Сбросить фильтры
+                    </button>
+                </div>
+
+                <!-- Filter Controls Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                    <!-- Position Filter -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Позиция</label>
+                        <select id="filterPosition" onchange="applyFilters()" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-fgreen-500 focus:outline-none">
+                            <option value="all">Все позиции</option>
+                            <option value="Нападающий">Нападающий</option>
+                            <option value="Полузащитник">Полузащитник</option>
+                            <option value="Защитник">Защитник</option>
+                        </select>
+                    </div>
+
+                    <!-- Country Filter -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Страна / Сборная</label>
+                        <select id="filterCountry" onchange="applyFilters()" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-fgreen-500 focus:outline-none">
+                            <option value="all">Все страны</option>
+                            <option value="Аргентина">Аргентина</option>
+                            <option value="Португалия">Португалия</option>
+                            <option value="Бразилия">Бразилия</option>
+                            <option value="Франция">Франция</option>
+                            <option value="Испания">Испания</option>
+                            <option value="Нидерланды">Нидерланды</option>
+                        </select>
+                    </div>
+
+                    <!-- Era Filter -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Эпоха</label>
+                        <select id="filterEra" onchange="applyFilters()" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-fgreen-500 focus:outline-none">
+                            <option value="all">Все эпохи</option>
+                            <option value="1950-1970">1950 — 1970</option>
+                            <option value="1980-1990">1980 — 1990</option>
+                            <option value="2000-2010">2000 — 2010</option>
+                            <option value="2010+">2010 — Н.В.</option>
+                        </select>
+                    </div>
+
+                    <!-- Club Filter -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Клуб</label>
+                        <select id="filterClub" onchange="applyFilters()" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-fgreen-500 focus:outline-none">
+                            <option value="all">Все клубы</option>
+                            <option value="Барселона">Барселона</option>
+                            <option value="Реал Мадрид">Реал Мадрид</option>
+                            <option value="Сантос">Сантос</option>
+                            <option value="ПСЖ">Пари Сен-Жермен</option>
+                            <option value="Ювентус">Ювентус</option>
+                            <option value="Манчестер Юнайтед">Манчестер Юнайтед</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Count & Active Search Banner -->
+            <div class="flex items-center justify-between px-1 text-sm text-slate-500 dark:text-slate-400">
+                <span id="filteredResultsCount">Показано 12 игрока(ов)</span>
+                <span id="activeSearchTag" class="hidden bg-fgreen-100 dark:bg-fgreen-900 text-fgreen-800 dark:text-fgreen-200 px-3 py-1 rounded-full text-xs font-medium"></span>
+            </div>
+
+            <!-- Catalog Cards Grid -->
+            <div id="catalogPlayerGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- JS Filtered Cards -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700">
+                <i class="fa-solid fa-magnifying-glass text-5xl text-gray-300 dark:text-slate-600 mb-4"></i>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Футболисты не найдены</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 mb-4">Попробуйте изменить параметры поиска или фильтров</p>
+                <button onclick="resetFilters()" class="px-4 py-2 bg-fgreen-900 text-white rounded-lg text-sm font-medium hover:bg-fgreen-800">
+                    Сбросить настройки
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW: PLAYER DETAIL (WIKIPEDIA STYLE ARTICLE) -->
+        <section id="view-player-detail" class="page-view hidden space-y-8">
+            <!-- Breadcrumbs -->
+            <nav class="flex items-center text-xs md:text-sm text-slate-500 dark:text-slate-400 gap-2 overflow-x-auto pb-1">
+                <button onclick="navigateTo('home')" class="hover:text-fgreen-800 dark:hover:text-fgreen-400">Главная</button>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                <button onclick="navigateTo('players')" class="hover:text-fgreen-800 dark:hover:text-fgreen-400">Футболисты</button>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                <span id="detailBreadcrumbName" class="font-semibold text-slate-800 dark:text-white truncate">Имя Футболиста</span>
+            </nav>
+
+            <!-- Article Header & Quick Navigation -->
+            <div class="border-b border-gray-200 dark:border-slate-700 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h1 id="detailFullName" class="text-3xl md:text-5xl font-extrabold font-serif text-slate-900 dark:text-white">
+                        Имя Игрока
+                    </h1>
+                    <div id="detailSubHeader" class="text-sm md:text-base text-slate-600 dark:text-slate-300 mt-2 flex flex-wrap items-center gap-3">
+                        <!-- JS injected -->
+                    </div>
+                </div>
+                <button onclick="window.print()" class="self-start md:self-auto px-3 py-1.5 rounded-lg border border-gray-300 dark:border-slate-700 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-print"></i> Печать статьи
+                </button>
+            </div>
+
+            <!-- Content Grid (Article Body + Right Infobox) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Main Article Text Column (8 cols on lg) -->
+                <div class="lg:col-span-8 space-y-8">
+                    
+                    <!-- Lead Biography -->
+                    <div class="prose dark:prose-invert max-w-none">
+                        <h2 class="text-xl font-bold font-serif text-slate-900 dark:text-white border-b border-gray-200 dark:border-slate-700 pb-2 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-book-open text-fgreen-700 dark:text-fgreen-400"></i> Биография и карьера
+                        </h2>
+                        <p id="detailBio" class="text-slate-700 dark:text-slate-300 text-base leading-relaxed font-light">
+                            <!-- Biography content -->
+                        </p>
+                    </div>
+
+                    <!-- Statistics Table -->
+                    <div>
+                        <h2 class="text-xl font-bold font-serif text-slate-900 dark:text-white border-b border-gray-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-simple text-fgreen-700 dark:text-fgreen-400"></i> Карьерная статистика
+                        </h2>
+                        
+                        <div class="overflow-x-auto bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
+                            <table class="w-full text-sm text-left text-slate-700 dark:text-slate-300">
+                                <thead class="text-xs uppercase bg-fgreen-900 text-white">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3">Категория</th>
+                                        <th scope="col" class="px-4 py-3 text-center">Матчи</th>
+                                        <th scope="col" class="px-4 py-3 text-center">Голы</th>
+                                        <th scope="col" class="px-4 py-3 text-center">Ассисты</th>
+                                        <th scope="col" class="px-4 py-3 text-center">Гол/Матч</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detailStatsTableBody" class="divide-y divide-gray-200 dark:divide-slate-700">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Trophies & Honors -->
+                    <div>
+                        <h2 class="text-xl font-bold font-serif text-slate-900 dark:text-white border-b border-gray-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-trophy text-amber-500"></i> Основные достижения и трофеи
+                        </h2>
+                        <div id="detailTrophiesList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <!-- Injected Badges/Items -->
+                        </div>
+                    </div>
+
+                    <!-- Interesting Facts Section -->
+                    <div class="bg-fgreen-50/60 dark:bg-slate-800/80 p-6 rounded-2xl border border-fgreen-200 dark:border-slate-700 space-y-3">
+                        <h3 class="text-lg font-bold font-serif text-fgreen-950 dark:text-fgreen-300 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-amber-500 text-xl"></i> Интересные факты
+                        </h3>
+                        <ul id="detailFactsList" class="space-y-2 text-slate-700 dark:text-slate-300 text-sm list-disc list-inside">
+                            <!-- Injected Facts -->
+                        </ul>
+                    </div>
+
+                    <!-- Famous Quote Card -->
+                    <div id="detailQuoteContainer" class="italic text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 p-5 rounded-xl border-l-4 border-fgreen-800 dark:border-fgreen-500 shadow-sm text-base">
+                        <p id="detailQuote" class="font-serif">«...»</p>
+                    </div>
+                </div>
+
+                <!-- Right Column: WIKIPEDIA INFOBOX (4 cols on lg) -->
+                <div class="lg:col-span-4">
+                    <div class="wiki-infobox bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden text-sm sticky top-24">
+                        
+                        <!-- Header Banner -->
+                        <div class="bg-fgreen-900 text-white p-3 text-center">
+                            <h3 id="infoboxHeaderName" class="font-bold font-serif text-lg leading-snug">Имя</h3>
+                            <span id="infoboxNativeName" class="text-xs text-fgreen-200 block italic mt-0.5">Полное имя</span>
+                        </div>
+
+                        <!-- Player Main Photo -->
+                        <div class="p-3 bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 flex flex-col items-center">
+                            <div class="w-full h-72 rounded-lg overflow-hidden relative shadow-inner">
+                                <img id="detailImage" src="" alt="Player Photo" class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80'">
+                            </div>
+                            <span id="detailImageCaption" class="text-[11px] text-slate-500 dark:text-slate-400 mt-2 text-center italic">Фотокарточка футболиста</span>
+                        </div>
+
+                        <!-- Key Information Table -->
+                        <div class="divide-y divide-gray-100 dark:divide-slate-700">
+                            
+                            <div class="p-3 flex justify-between items-center">
+                                <span class="font-semibold text-slate-500 dark:text-slate-400 text-xs">Гражданство</span>
+                                <span id="infoboxCountry" class="font-medium text-slate-800 dark:text-slate-100 flex items-center gap-1.5"></span>
+                            </div>
+
+                            <div class="p-3 flex justify-between items-center">
+                                <span class="font-semibold text-slate-500 dark:text-slate-400 text-xs">Дата рождения</span>
+                                <span id="infoboxDOB" class="font-medium text-slate-800 dark:text-slate-100"></span>
+                            </div>
+
+                            <div class="p-3 flex justify-between items-center">
+                                <span class="font-semibold text-slate-500 dark:text-slate-400 text-xs">Позиция</span>
+                                <span id="infoboxPosition" class="font-medium text-slate-800 dark:text-slate-100"></span>
+                            </div>
+
+                            <div class="p-3 flex justify-between items-center">
+                                <span class="font-semibold text-slate-500 dark:text-slate-400 text-xs">Рост</span>
+                                <span id="infoboxHeight" class="font-medium text-slate-800 dark:text-slate-100"></span>
+                            </div>
+
+                            <div class="p-3 flex justify-between items-center">
+                                <span class="font-semibold text-slate-500 dark:text-slate-400 text-xs">Годы карьеры</span>
+                                <span id="infoboxYears" class="font-medium text-fgreen-800 dark:text-fgreen-400 font-bold"></span>
+                            </div>
+
+                            <div class="p-3">
+                                <span class="font-semibold text-slate-500 dark:text-slate-400 text-xs block mb-1">Основные клубы</span>
+                                <div id="infoboxClubs" class="flex flex-wrap gap-1 text-xs"></div>
+                            </div>
+
+                            <div class="p-3">
+                                <span class="font-semibold text-slate-500 dark:text-slate-400 text-xs block mb-1">Сборная</span>
+                                <div id="infoboxNationalTeam" class="text-xs font-medium text-slate-800 dark:text-slate-200"></div>
+                            </div>
+
+                        </div>
+
+                        <!-- Footer Navigation inside Infobox -->
+                        <div class="p-3 bg-gray-50 dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 text-center">
+                            <button onclick="navigateTo('players')" class="w-full py-2 bg-fgreen-900 hover:bg-fgreen-800 text-white text-xs font-semibold rounded-lg transition-colors">
+                                Вернуться в каталог
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- VIEW: CLUBS -->
+        <section id="view-clubs" class="page-view hidden space-y-6">
+            <div class="border-b border-gray-200 dark:border-slate-700 pb-4">
+                <h1 class="text-3xl font-bold font-serif text-slate-900 dark:text-white">Великие Футбольные Клубы</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Дома легенд: легендарные команды, воспитавшие и собравшие главных футболистов мира</p>
+            </div>
+
+            <div id="clubsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- VIEW: NATIONAL TEAMS -->
+        <section id="view-teams" class="page-view hidden space-y-6">
+            <div class="border-b border-gray-200 dark:border-slate-700 pb-4">
+                <h1 class="text-3xl font-bold font-serif text-slate-900 dark:text-white">Национальные Сборные</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Главные сборные планеты и их величайшие триумфы на Чемпионатах Мира</p>
+            </div>
+
+            <div id="teamsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- VIEW: ABOUT PAGE -->
+        <section id="view-about" class="page-view hidden space-y-8 max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 space-y-6">
+                <div class="flex items-center gap-4 border-b border-gray-200 dark:border-slate-700 pb-6">
+                    <div class="w-16 h-16 bg-fgreen-900 text-white rounded-2xl flex items-center justify-center text-3xl shadow-md">
+                        <i class="fa-solid fa-futbol"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold font-serif text-slate-900 dark:text-white">О проекте «Football Legends»</h1>
+                        <p class="text-sm text-fgreen-700 dark:text-fgreen-400 font-medium mt-1">Интерактивная свободная энциклопедия о величайших футболистах</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed font-light text-base">
+                    <p>
+                        <strong>«Football Legends»</strong> — это современная онлайн-энциклопедия, созданная с целью сохранения и систематизации культурного и спортивного наследия величайших мастеров мирового футбола.
+                    </p>
+                    <p>
+                        Наш дизайн объединяет лучшие традиции классической Википедии — информативность, точную статистику, удобные таблицы и структурированную биографию — с современным и эстетичным визуальным интерфейсом.
+                    </p>
+                    
+                    <h3 class="text-xl font-bold font-serif text-slate-900 dark:text-white pt-4">Ключевые принципы проекта</h3>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm font-normal pt-2">
+                        <li class="bg-gray-50 dark:bg-slate-900 p-4 rounded-xl border border-gray-200 dark:border-slate-700 flex items-start gap-3">
+                            <i class="fa-solid fa-check text-fgreen-600 text-lg mt-0.5"></i>
+                            <div>
+                                <strong class="block text-slate-900 dark:text-white mb-1">Точность данных</strong>
+                                Вся статистика голов, ассистов и матчей сверена с официальными футбольными реестрами.
+                            </div>
+                        </li>
+                        <li class="bg-gray-50 dark:bg-slate-900 p-4 rounded-xl border border-gray-200 dark:border-slate-700 flex items-start gap-3">
+                            <i class="fa-solid fa-mobile-screen text-fgreen-600 text-lg mt-0.5"></i>
+                            <div>
+                                <strong class="block text-slate-900 dark:text-white mb-1">Адаптивность</strong>
+                                Удобный просмотр с любых устройств — от смартфонов до широкоформатных мониторов.
+                            </div>
+                        </li>
+                        <li class="bg-gray-50 dark:bg-slate-900 p-4 rounded-xl border border-gray-200 dark:border-slate-700 flex items-start gap-3">
+                            <i class="fa-solid fa-moon text-fgreen-600 text-lg mt-0.5"></i>
+                            <div>
+                                <strong class="block text-slate-900 dark:text-white mb-1">Комфорт чтения</strong>
+                                Поддержка тёмной темы для уединённого чтения в вечернее время.
+                            </div>
+                        </li>
+                        <li class="bg-gray-50 dark:bg-slate-900 p-4 rounded-xl border border-gray-200 dark:border-slate-700 flex items-start gap-3">
+                            <i class="fa-solid fa-filter text-fgreen-600 text-lg mt-0.5"></i>
+                            <div>
+                                <strong class="block text-slate-900 dark:text-white mb-1">Мгновенные фильтры</strong>
+                                Мгновенный поиск игрока по клубам, национальностям и позициям.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Stats summary -->
+                <div class="bg-fgreen-900 text-white p-6 rounded-xl flex flex-wrap justify-around text-center gap-4 mt-6">
+                    <div>
+                        <div class="text-3xl font-extrabold text-fgreen-200">12</div>
+                        <div class="text-xs uppercase tracking-wider text-fgreen-100">Легендарных Игроков</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-extrabold text-fgreen-200">9</div>
+                        <div class="text-xs uppercase tracking-wider text-fgreen-100">Топовых Клубов</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-extrabold text-fgreen-200">6</div>
+                        <div class="text-xs uppercase tracking-wider text-fgreen-100">Великих Сборных</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-fgreen-950 text-fgreen-200 mt-16 border-t border-fgreen-800 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-futbol text-white text-xl"></i>
+                        <span class="text-lg font-bold font-serif text-white">Football Legends</span>
+                    </div>
+                    <p class="text-xs text-fgreen-300 leading-relaxed">
+                        Современная футбольная энциклопедия с открытым доступом к биографиям и архивам.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Разделы</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><button onclick="navigateTo('home')" class="hover:text-white transition-colors">Главная</button></li>
+                        <li><button onclick="navigateTo('players')" class="hover:text-white transition-colors">Каталог футболистов</button></li>
+                        <li><button onclick="navigateTo('clubs')" class="hover:text-white transition-colors">Футбольные клубы</button></li>
+                        <li><button onclick="navigateTo('teams')" class="hover:text-white transition-colors">Национальные сборные</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Избранные Эпохи</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><button onclick="filterByEraShortcut('1950-1970')" class="hover:text-white transition-colors">Золотая эра Пеле (1950-70)</button></li>
+                        <li><button onclick="filterByEraShortcut('1980-1990')" class="hover:text-white transition-colors">Эпоха Марадоны (1980-90)</button></li>
+                        <li><button onclick="filterByEraShortcut('2000-2010')" class="hover:text-white transition-colors">Волшебники 2000-х</button></li>
+                        <li><button onclick="filterByEraShortcut('2010+')" class="hover:text-white transition-colors">Современное соперничество</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Информация</h4>
+                    <p class="text-xs text-fgreen-300 mb-3">
+                        Все используемые материалы предназначены исключительно для ознакомительных и познавательных целей.
+                    </p>
+                    <span class="inline-block text-[10px] bg-fgreen-900 text-fgreen-200 px-2 py-1 rounded">
+                        Версия Энциклопедии 2.4.0
+                    </span>
+                </div>
+            </div>
+
+            <div class="border-t border-fgreen-900 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-fgreen-400 gap-4">
+                <p>© 2026 Football Legends Encyclopedia. Все права защищены.</p>
+                <div class="flex space-x-4">
+                    <button onclick="scrollToTop()" class="hover:text-white transition-colors">
+                        <i class="fa-solid fa-arrow-up mr-1"></i> Наверх
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back To Top Floating Button -->
+    <button id="backToTopBtn" onclick="scrollToTop()" class="fixed bottom-6 right-6 z-50 p-3.5 bg-fgreen-800 hover:bg-fgreen-700 text-white rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none transform translate-y-4">
+        <i class="fa-solid fa-chevron-up text-lg"></i>
+    </button>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        const PLAYERS_DATA = [
+            {
+                id: 'ronaldo',
+                name: 'Cristiano Ronaldo',
+                fullName: 'Криштиану Роналду душ Сантуш Авейру',
+                country: 'Португалия',
+                flag: '🇵🇹',
+                position: 'Нападающий',
+                years: '2002 — н.в.',
+                era: '2010+',
+                dob: '5 февраля 1985 (41 год)',
+                height: '187 см',
+                clubs: ['Манчестер Юнайтед', 'Реал Мадрид', 'Ювентус', 'Аль-Наср'],
+                nationalTeam: 'Сборная Португалии (200+ матчей)',
+                image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80',
+                bio: 'Криштиану Роналду — один из самых результативных и атлетичных футболистов в истории футбола. Обладатель пяти Золотых мячей и пяти кубков Лиги чемпионов УЕФА. Выступал за ведущие европейские клубы, переписывая рекорды по забитым голам как на клубном уровне, так и за национальную сборную Португалии, с которой выиграл Чемпионат Европы 2016 года.',
+                stats: {
+                    careerMatches: 1200,
+                    careerGoals: 890,
+                    careerAssists: 250,
+                    uclGoals: 140,
+                    intlGoals: 130
+                },
+                trophies: [
+                    '5x Золотой Мяч (2008, 2013, 2014, 2016, 2017)',
+                    '5x Лига Чемпионов УЕФА',
+                    '1x Чемпион Европы (Евро-2016)',
+                    '4x Золотая Бутса Европы',
+                    '3x Чемпион Англии, 2x Чемпион Испании, 2x Чемпион Италии'
+                ],
+                facts: [
+                    'Лучший бомбардир в истории официальных матчей футбола.',
+                    'Единственный игрок, забивавший на 5 разных Чемпионатах Мира.',
+                    'Обладает рекордным прыжком в высоту при ударе головой (до 2.93 м).',
+                    'Первый футболист, заработавший более $1 миллиарда за карьеру.'
+                ],
+                quote: 'Ваша любовь делает меня сильным, ваша ненависть делает меня неудержимым.'
+            },
+            {
+                id: 'messi',
+                name: 'Lionel Messi',
+                fullName: 'Лионель Андрес Месси',
+                country: 'Аргентина',
+                flag: '🇦🇷',
+                position: 'Нападающий',
+                years: '2004 — н.в.',
+                era: '2010+',
+                dob: '24 июня 1987 (39 лет)',
+                height: '170 см',
+                clubs: ['Барселона', 'ПСЖ', 'Интер Майами'],
+                nationalTeam: 'Сборная Аргентины',
+                image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80',
+                bio: 'Лионель Месси — гениальный аргентинский нападающий, восьмикратный обладатель «Золотого мяча» и чемпион мира 2022 года. Почти два десятилетия провел в «Барселоне», установив абсолютный рекорд клуба по забитым мячам и сыгранным матчам. По мнению большинства экспертов, лучший дриблер и плеймейкер XXI века.',
+                stats: {
+                    careerMatches: 1080,
+                    careerGoals: 835,
+                    careerAssists: 372,
+                    uclGoals: 129,
+                    intlGoals: 106
+                },
+                trophies: [
+                    '8x Золотой Мяч (Рекорд)',
+                    '1x Чемпион Мира (2022)',
+                    '4x Лига Чемпионов УЕФА',
+                    '2x Кубок Америки (2021, 2024)',
+                    '10x Чемпион Испании, 2x Чемпион Франции'
+                ],
+                facts: [
+                    'Забил рекордные 91 гол за один календарный год (2012).',
+                    'Обладатель 6 «Золотых бутс» Европы.',
+                    'Единственный игрок, получавший Золотой мяч ЧМ дважды (2014, 2022).',
+                    'Прибыл в Барселону в возрасте 13 лет, первый контракт подписал на бумажной салфетке.'
+                ],
+                quote: 'Мне нужно было 17 лет и 114 дней, чтобы стать знаменитым за одну ночь.'
+            },
+            {
+                id: 'pele',
+                name: 'Pelé',
+                fullName: 'Эдсон Арантис ду Насименту (Пеле)',
+                country: 'Бразилия',
+                flag: '🇧🇷',
+                position: 'Нападающий',
+                years: '1956 — 1977',
+                era: '1950-1970',
+                dob: '23 октября 1940 — 29 декабря 2022',
+                height: '173 см',
+                clubs: ['Сантос', 'Нью-Йорк Космос'],
+                nationalTeam: 'Сборная Бразилии',
+                image: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?auto=format&fit=crop&w=800&q=80',
+                bio: 'Пеле — «Король футбола», единственный футболист в истории, выигравший три Чемпионата Мира в качестве игрока (1958, 1962, 1970). Признан ФИФА лучшим футболистом XX века. Символ бразильского футбольного стиля «Жого Бонито» (Красивая игра).',
+                stats: {
+                    careerMatches: 1363,
+                    careerGoals: 1281,
+                    careerAssists: 320,
+                    uclGoals: 0,
+                    intlGoals: 77
+                },
+                trophies: [
+                    '3x Чемпион Мира (1958, 1962, 1970 — Рекорд)',
+                    '2x Межконтинентальный кубок',
+                    '2x Кубок Либертадорес',
+                    '6x Чемпион Бразилии',
+                    'Игрок века по версии ФИФА'
+                ],
+                facts: [
+                    'Забил свой первый гол на Чемпионате мира в возрасте 17 лет и 239 дней.',
+                    'Забил за карьеру 92 хет-трика.',
+                    'Во время турне его клуба «Сантос» в Нигерии в 1967 году стороны объявили 48-часовое перемирие в гражданской войне, чтобы посмотреть на игру Пеле.',
+                    'Был объявлен национальным достоянием Бразилии.'
+                ],
+                quote: 'Футболу не нужны новые Пеле или Марадона. Футбол всегда будет рождать новых уникальных гениев.'
+            },
+            {
+                id: 'maradona',
+                name: 'Diego Maradona',
+                fullName: 'Диего Армандо Марадона',
+                country: 'Аргентина',
+                flag: '🇦🇷',
+                position: 'Полузащитник',
+                years: '1976 — 1997',
+                era: '1980-1990',
+                dob: '30 октября 1960 — 25 ноября 2020',
+                height: '165 см',
+                clubs: ['Бока Хуниорс', 'Барселона', 'Наполи', 'Севилья'],
+                nationalTeam: 'Сборная Аргентины',
+                image: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=800&q=80',
+                bio: 'Диего Марадона — икона аргентинского и мирового футбола, обладавший феноменальным визионерством, дриблингом и техникой. На Чемпионате Мира 1986 года забил знаменитый «Гол века» и скандальный гол «Рука Бога», приведя сборную Аргентины к чемпионскому титулу.',
+                stats: {
+                    careerMatches: 680,
+                    careerGoals: 345,
+                    careerAssists: 240,
+                    uclGoals: 2,
+                    intlGoals: 34
+                },
+                trophies: [
+                    '1x Чемпион Мира (1986)',
+                    '2x Чемпион Италии (Серия А с «Наполи»)',
+                    '1x Кубок УЕФА (1989)',
+                    'Золотой мяч ЧМ-1986',
+                    'Игрок века по голосованию болельщиков ФИФА'
+                ],
+                facts: [
+                    'Сделал скромный итальянский «Наполи» чемпионским клубом вопреки грандам Севера.',
+                    'Автор лучших 10 секунд в истории футбола: обвел 5 игроков Англии за 60 метров.',
+                    'Его боготворят в Неаполе и Аргентине, где основана «Церковь Марадоны».',
+                    'Дебютировал за взрослый клуб всего за 10 дней до своего 16-летия.'
+                ],
+                quote: 'Если бы я не совершал ошибок, я бы играл ещё лучше. Но футбол — это самый чистый вид спорта.'
+            },
+            {
+                id: 'zidane',
+                name: 'Zinedine Zidane',
+                fullName: 'Зинедин Язид Зидан',
+                country: 'Франция',
+                flag: '🇫🇷',
+                position: 'Полузащитник',
+                years: '1989 — 2006',
+                era: '2000-2010',
+                dob: '23 июня 1972 (54 года)',
+                height: '185 см',
+                clubs: ['Бордо', 'Ювентус', 'Реал Мадрид'],
+                nationalTeam: 'Сборная Франции',
+                image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
+                bio: 'Зинедин «Зизу» Зидан — элегантный французский атакующий полузащитник, отличавшийся филигранным контролем мяча, обработкой и ключевыми голами в финалах. Привел Францию к победе на ЧМ-1998 и Евро-2000, а «Реал Мадрид» — к триумфу в Лиге чемпионов 2002 года.',
+                stats: {
+                    careerMatches: 797,
+                    careerGoals: 156,
+                    careerAssists: 165,
+                    uclGoals: 14,
+                    intlGoals: 31
+                },
+                trophies: [
+                    '1x Золотой Мяч (1998)',
+                    '1x Чемпион Мира (1998)',
+                    '1x Чемпион Европы (2000)',
+                    '1x Лига Чемпионов УЕФА (2002)',
+                    '3x Игрок года ФИФА'
+                ],
+                facts: [
+                    'Забил победный гол слета («удар с лета Зидана») в финале ЛЧ 2002 года.',
+                    'Забил два гола головой в финале ЧМ-1998 против Бразилии.',
+                    'Единственный тренер в истории, выигравший 3 Лиги чемпионов подряд (с «Реалом»).',
+                    'Знаменитый финт «Марсельская рулетка» стал его фирменным знаком.'
+                ],
+                quote: 'Я плакал, потому что у меня не было кед, но однажды встретил человека, у которого не было ног.'
+            },
+            {
+                id: 'ronaldinho',
+                name: 'Ronaldinho',
+                fullName: 'Роналдо де Ассис Морейра (Роналдиньо)',
+                country: 'Бразилия',
+                flag: '🇧🇷',
+                position: 'Полузащитник',
+                years: '1998 — 2015',
+                era: '2000-2010',
+                dob: '21 марта 1980 (46 лет)',
+                height: '182 см',
+                clubs: ['Гремио', 'ПСЖ', 'Барселона', 'Милан', 'Атлетико Минейро'],
+                nationalTeam: 'Сборная Бразилии',
+                image: 'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?auto=format&fit=crop&w=800&q=80',
+                bio: 'Роналдиньо — волшебник и виртуоз футбола, даривший болельщикам искреннюю улыбку и невероятные финты. Возродил «Барселону» в середине 2000-х годов, выиграв Золотой мяч и Лигу Чемпионов. Единственный игрок, выигравший ЧМ, Копа Америка, Лигу чемпионов и Кубок Либертадорес.',
+                stats: {
+                    careerMatches: 712,
+                    careerGoals: 266,
+                    careerAssists: 192,
+                    uclGoals: 18,
+                    intlGoals: 33
+                },
+                trophies: [
+                    '1x Золотой Мяч (2005)',
+                    '1x Чемпион Мира (2002)',
+                    '1x Лига Чемпионов УЕФА (2006)',
+                    '1x Кубок Либертадорес (2013)',
+                    '2x Игрок года ФИФА'
+                ],
+                facts: [
+                    'Один из редких игроков «Барселоны», которому аплодировал стадион «Сантьяго Бернабеу» в Мадриде.',
+                    'Стал звездами ранних вирусных видеороликов Nike, где 4 раза подряд попадал в перекладину.',
+                    'В возрасте 13 лет его команда выиграла матч со счетом 23:0, и все 23 гола забил Роналдиньо.'
+                ],
+                quote: 'Футбольный мяч — это не просто предмет. Это моя самая верная и любимая подруга.'
+            },
+            {
+                id: 'ronaldo_nazario',
+                name: 'Ronaldo Nazário',
+                fullName: 'Роналду Луис Назарио де Лима',
+                country: 'Бразилия',
+                flag: '🇧🇷',
+                position: 'Нападающий',
+                years: '1993 — 2011',
+                era: '1980-1990',
+                dob: '18 сентября 1976 (50 лет)',
+                height: '183 см',
+                clubs: ['ПСВ', 'Барселона', 'Интер', 'Реал Мадрид', 'Милан'],
+                nationalTeam: 'Сборная Бразилии',
+                image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+                bio: 'Роналду «Феномен» — невероятно взрывной, техничный и мощный нападающий, сочетавший реактивную скорость и смертельную точность. Двукратный чемпион мира и двукратный обладатель Золотого мяча. Самый молодой лауреат премии Игрок Года ФИФА в истории.',
+                stats: {
+                    careerMatches: 616,
+                    careerGoals: 414,
+                    careerAssists: 104,
+                    uclGoals: 14,
+                    intlGoals: 62
+                },
+                trophies: [
+                    '2x Чемпион Мира (1994, 2002)',
+                    '2x Золотой Мяч (1997, 2002)',
+                    '3x Игрок года ФИФА',
+                    '2x Кубок Америки',
+                    'Золотая бутса ЧМ-2002 (8 голов)'
+                ],
+                facts: [
+                    'В 21 год стал самым молодым обладателем Золотого мяча в истории (1997).',
+                    'Забил 15 голов на Чемпионатах Мира.',
+                    'Оформил знаменитый хет-трик на стадионе «Олд Траффорд» против МЮ в 2003 году.'
+                ],
+                quote: 'Скорость без контроля мяча — ничто. Я всегда тренировал дриблинг на максимальном ходу.'
+            },
+            {
+                id: 'cruyff',
+                name: 'Johan Cruyff',
+                fullName: 'Хендрик Йохан Кройф',
+                country: 'Нидерланды',
+                flag: '🇳🇱',
+                position: 'Нападающий',
+                years: '1964 — 1984',
+                era: '1950-1970',
+                dob: '25 апреля 1947 — 24 марта 2016',
+                height: '178 см',
+                clubs: ['Аякс', 'Барселона', 'Фейеноорд'],
+                nationalTeam: 'Сборная Нидерландов',
+                image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+                bio: 'Йохан Кройф — идеолог «тотального футбола», изменивший философию игры как футболист и как тренер. Трехкратный обладатель Золотого мяча, с «Аяксом» выиграл три Кубка европейских чемпионов подряд. Основоположник философии академии «Ла Масия» в Барселоне.',
+                stats: {
+                    careerMatches: 710,
+                    careerGoals: 405,
+                    careerAssists: 210,
+                    uclGoals: 19,
+                    intlGoals: 33
+                },
+                trophies: [
+                    '3x Золотой Мяч (1971, 1973, 1974)',
+                    '3x Кубок Европейских Чемпионов (Аякс)',
+                    '1x Финалист ЧМ-1974',
+                    '9x Чемпион Нидерландов, 1x Чемпион Испании'
+                ],
+                facts: [
+                    'Изобретатель знаменитого финта «Поворот Кройфа» (Cruyff Turn).',
+                    'Играл под культовым 14-м номером, который был изъят из обращения в «Аяксе».',
+                    'Его философия заложила фундамент современной «Барселоны» и сборной Испании.'
+                ],
+                quote: 'Играть в футбол очень просто, но играть в простой футбол — сложнее всего.'
+            },
+            {
+                id: 'iniesta',
+                name: 'Andrés Iniesta',
+                fullName: 'Андрес Иньеста Лухан',
+                country: 'Испания',
+                flag: '🇪🇸',
+                position: 'Полузащитник',
+                years: '2001 — 2024',
+                era: '2010+',
+                dob: '11 мая 1984 (42 года)',
+                height: '170 см',
+                clubs: ['Барселона', 'Виссел Кобе', 'Эмирейтс'],
+                nationalTeam: 'Сборная Испании',
+                image: 'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?auto=format&fit=crop&w=800&q=80',
+                bio: 'Андрес Иньеста — гениальный испанский полузащитник, отличавшийся феноменальным видением поля и контролем мяча под прессингом. Автор победного гола в финале Чемпионата Мира 2010 года. Выиграл 35 трофеев с «Барселоной».',
+                stats: {
+                    careerMatches: 1000,
+                    careerGoals: 93,
+                    careerAssists: 172,
+                    uclGoals: 11,
+                    intlGoals: 14
+                },
+                trophies: [
+                    '1x Чемпион Мира (2010)',
+                    '2x Чемпион Европы (2008, 2012)',
+                    '4x Лига Чемпионов УЕФА',
+                    '9x Чемпион Испании',
+                    'Лучший игрок Европы по версии УЕФА (2012)'
+                ],
+                facts: [
+                    'Забил самый важный гол в истории испанского футбола на 116-й минуте финала ЧМ-2010.',
+                    'Имеет редчайшее уважение: болельщики почти всех клубов Испании аплодировали ему стоя.',
+                    'Признавался лучшим игроком финала ЧМ, финала Евро и финала Лиги Чемпионов.'
+                ],
+                quote: 'Идеал недостижим, но стремление к нему делает тебя лучше каждый день.'
+            },
+            {
+                id: 'xavi',
+                name: 'Xavi',
+                fullName: 'Хавьер Эрнандес Креус (Чави)',
+                country: 'Испания',
+                flag: '🇪🇸',
+                position: 'Полузащитник',
+                years: '1998 — 2019',
+                era: '2010+',
+                dob: '25 января 1980 (46 лет)',
+                height: '170 см',
+                clubs: ['Барселона', 'Аль-Садд'],
+                nationalTeam: 'Сборная Испании',
+                image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80',
+                bio: 'Хави — «мозг» и метроном стиля тики-така. Мастер точных передач, контроля темпа игры и разворотов с мячом. Символ величайшей эпохи «Барселоны» и сборной Испании, доминировавших в мировом футболе.',
+                stats: {
+                    careerMatches: 1017,
+                    careerGoals: 112,
+                    careerAssists: 238,
+                    uclGoals: 11,
+                    intlGoals: 13
+                },
+                trophies: [
+                    '1x Чемпион Мира (2010)',
+                    '2x Чемпион Европы (2008, 2012)',
+                    '4x Лига Чемпионов УЕФА',
+                    '8x Чемпион Испании',
+                    '3-е место в голосовании Золотой Мяч (3 раза)'
+                ],
+                facts: [
+                    'Совершил рекордное количество точных передач на Евро-2012 (более 94% точности).',
+                    'Провел 767 матчей за «Барселону».',
+                    'Его точность пасов в ключевых матчах достигала 98%.'
+                ],
+                quote: 'Передача — это диалог между двумя игроками. Уважай партнёра, давая ему мяч удобно.'
+            },
+            {
+                id: 'neymar',
+                name: 'Neymar',
+                fullName: 'Неймар да Силва Сантос Жуниор',
+                country: 'Бразилия',
+                flag: '🇧🇷',
+                position: 'Нападающий',
+                years: '2009 — н.в.',
+                era: '2010+',
+                dob: '5 февраля 1992 (34 года)',
+                height: '175 см',
+                clubs: ['Сантос', 'Барселона', 'ПСЖ', 'Аль-Хилаль'],
+                nationalTeam: 'Сборная Бразилии',
+                image: 'https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?auto=format&fit=crop&w=800&q=80',
+                bio: 'Неймар — феноменально одаренный бразильский вингер и нападающий. Часть знаменитого трио MSN (Месси, Суарес, Неймар). Обладает ярким бразильским финтерским стилем, рекордсмен по сумме трансферов в истории футбола (€222 млн).',
+                stats: {
+                    careerMatches: 710,
+                    careerGoals: 439,
+                    careerAssists: 256,
+                    uclGoals: 43,
+                    intlGoals: 79
+                },
+                trophies: [
+                    '1x Лига Чемпионов УЕФА (2015)',
+                    '1x Олимпийский Чемпион (2016)',
+                    '1x Кубок Либертадорес (2011)',
+                    '2x Чемпион Испании, 5x Чемпион Франции',
+                    'Лучший бомбардир в истории сборной Бразилии (79 голов)'
+                ],
+                facts: [
+                    'Обошел Пеле и стал лучшим бомбардиром в истории сборной Бразилии.',
+                    'Самый дорогой трансфер в истории футбола (€222 млн из «Барселоны» в ПСЖ).',
+                    'Принес Бразилии первое в истории золотую олимпийскую медаль в футболе (2016).'
+                ],
+                quote: 'Я играю в футбол не для того, чтобы быть лучшим, а чтобы быть счастливым.'
+            },
+            {
+                id: 'mbappe',
+                name: 'Kylian Mbappé',
+                fullName: 'Килиан Мбаппе Лоттен',
+                country: 'Франция',
+                flag: '🇫🇷',
+                position: 'Нападающий',
+                years: '2015 — н.в.',
+                era: '2010+',
+                dob: '20 декабря 1998 (27 лет)',
+                height: '178 см',
+                clubs: ['Монако', 'ПСЖ', 'Реал Мадрид'],
+                nationalTeam: 'Сборная Франции',
+                image: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?auto=format&fit=crop&w=800&q=80',
+                bio: 'Килиан Мбаппе — лидер нового поколения мирового футбола, обладающий реактивной рывковой скоростью (до 38 км/ч) и невероятной хладнокровностью перед воротами. Чемпион мира 2018 года в возрасте 19 лет, автор хет-трика в финале ЧМ-2022.',
+                stats: {
+                    careerMatches: 450,
+                    careerGoals: 330,
+                    careerAssists: 155,
+                    uclGoals: 48,
+                    intlGoals: 47
+                },
+                trophies: [
+                    '1x Чемпион Мира (2018)',
+                    '1x Финалист ЧМ (2022, Золотая бутса - 8 голов)',
+                    '7x Чемпион Франции',
+                    '1x Лига Наций УЕФА',
+                    'Лучший молодой игрок ЧМ-2018'
+                ],
+                facts: [
+                    'Второй тинейджер в истории после Пеле, забивший в финале Чемпионата Мира.',
+                    'Оформил хет-трик в финале Чемпионата Мира 2022 года против Аргентины.',
+                    'Лучший бомбардир в истории «Пари Сен-Жермен» (256 голов).'
+                ],
+                quote: 'Когда ты веришь в свои мечты, ты можешь свергнуть любые горы.'
+            }
+        ];
+
+        const CLUBS_DATA = [
+            {
+                name: 'Реал Мадрид',
+                country: 'Испания 🇪🇸',
+                founded: '1902',
+                uclTitles: '15 побед в ЛЧ',
+                stadium: 'Сантьяго Бернабеу',
+                image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
+                legends: ['Cristiano Ronaldo', 'Zinedine Zidane', 'Ronaldo Nazário', 'Kylian Mbappé'],
+                description: 'Самый титулованный клуб в истории европейского футбола и Лучший клуб XX века по версии ФИФА.'
+            },
+            {
+                name: 'Барселона',
+                country: 'Испания 🇪🇸',
+                founded: '1899',
+                uclTitles: '5 побед в ЛЧ',
+                stadium: 'Камп Ноу',
+                image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80',
+                legends: ['Lionel Messi', 'Ronaldinho', 'Johan Cruyff', 'Andrés Iniesta', 'Xavi'],
+                description: 'Символ каталонской культуры, известный философией владения мяча и знаменитой академией «Ла Масия».'
+            },
+            {
+                name: 'Пари Сен-Жермен',
+                country: 'Франция 🇫🇷',
+                founded: '1970',
+                uclTitles: '12 Титулов Лиги 1',
+                stadium: 'Парк де Пренс',
+                image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+                legends: ['Kylian Mbappé', 'Neymar', 'Lionel Messi', 'Ronaldinho'],
+                description: 'Главный гегемон французского футбола XXI века, собравший в своем составе ярчайших звёзд мира.'
+            },
+            {
+                name: 'Сантос',
+                country: 'Бразилия 🇧🇷',
+                founded: '1912',
+                uclTitles: '3 Кубка Либертадорес',
+                stadium: 'Вила Белмиро',
+                image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80',
+                legends: ['Pelé', 'Neymar'],
+                description: 'Легендарная бразильская кузница талантов, в которой засияли «Король футбола» Пеле и Неймар.'
+            },
+            {
+                name: 'Ювентус',
+                country: 'Италия 🇮🇹',
+                founded: '1897',
+                uclTitles: '36 Титулов Серии А',
+                stadium: 'Альянц Стадион',
+                image: 'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?auto=format&fit=crop&w=800&q=80',
+                legends: ['Cristiano Ronaldo', 'Zinedine Zidane'],
+                description: '«Старая Синьора» — самый титулованный клуб Италии, славящийся своей тактической дисциплиной.'
+            },
+            {
+                name: 'Аякс',
+                country: 'Нидерланды 🇳🇱',
+                founded: '1900',
+                uclTitles: '4 победы в ЛЧ',
+                stadium: 'Йохан Кройф Арена',
+                image: 'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?auto=format&fit=crop&w=800&q=80',
+                legends: ['Johan Cruyff'],
+                description: 'Родина революционного «тотального футбола» и один из главных академических центров мирового футбола.'
+            }
+        ];
+
+        const TEAMS_DATA = [
+            {
+                name: 'Сборная Бразилии',
+                flag: '🇧🇷',
+                wcTitles: '5 Титулов Чемпионов Мира',
+                years: '1958, 1962, 1970, 1994, 2002',
+                image: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?auto=format&fit=crop&w=800&q=80',
+                keyPlayers: 'Pelé, Ronaldo Nazário, Ronaldinho, Neymar',
+                desc: 'Пентакампеоны — самая успешная сборная в истории Мундиталей, олицетворение карнавального футбола.'
+            },
+            {
+                name: 'Сборная Аргентины',
+                flag: '🇦🇷',
+                wcTitles: '3 Титула Чемпионов Мира',
+                years: '1978, 1986, 2022',
+                image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80',
+                keyPlayers: 'Lionel Messi, Diego Maradona',
+                desc: 'Страна страстного футбола, подарившая миру двух величайших гениев — Марадону и Месси.'
+            },
+            {
+                name: 'Сборная Франции',
+                flag: '🇫🇷',
+                wcTitles: '2 Титула Чемпионов Мира',
+                years: '1998, 2018',
+                image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
+                keyPlayers: 'Zinedine Zidane, Kylian Mbappé',
+                desc: 'Двукратные чемпионы мира и европы, славящиеся своей атлетичностью, глубиной состава и классом.'
+            },
+            {
+                name: 'Сборная Испании',
+                flag: '🇪🇸',
+                wcTitles: '1 Чемпион Мира, 4 Евро',
+                years: '2010 (ЧМ), 1964, 2008, 2012, 2024',
+                image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80',
+                keyPlayers: 'Andrés Iniesta, Xavi',
+                desc: 'Создатели непревзойденного стиля «тики-така», доминировавшие на мировой арене в 2008-2012 годах.'
+            },
+            {
+                name: 'Сборная Португалии',
+                flag: '🇵🇹',
+                wcTitles: '1 Чемпион Европы, 1 Лига Наций',
+                years: '2016 (Евро)',
+                image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80',
+                keyPlayers: 'Cristiano Ronaldo, Eusébio',
+                desc: 'Европейская футбольная держава, во главе с Криштиану Роналду завоевавшая Евро-2016.'
+            },
+            {
+                name: 'Сборная Нидерландов',
+                flag: '🇳🇱',
+                wcTitles: '1 Чемпион Европы (1988)',
+                years: 'Финалисты ЧМ 1974, 1978, 2010',
+                image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+                keyPlayers: 'Johan Cruyff, Marco van Basten',
+                desc: 'Законодатели стиля «тотального футбола», подарившие миру десятки ярчайших мастеров.'
+            }
+        ];
+
+        let activePage = 'home';
+        let filteredPlayers = [...PLAYERS_DATA];
+
+        // On DOM Load Init
+        window.addEventListener('DOMContentLoaded', () => {
+            renderFeaturedPlayers();
+            renderCatalogPlayers();
+            renderClubs();
+            renderTeams();
+            setupScrollListener();
+            
+            // Check hash in URL for direct player links
+            handleUrlHash();
+        });
+
+        // Handle URL Hash Navigation
+        window.addEventListener('hashchange', handleUrlHash);
+
+        function handleUrlHash() {
+            const hash = window.location.hash.replace('#', '');
+            if (!hash) return;
+
+            if (hash.startsWith('player/')) {
+                const playerId = hash.split('/')[1];
+                openPlayerDetail(playerId, false);
+            } else if (['home', 'players', 'clubs', 'teams', 'about'].includes(hash)) {
+                navigateTo(hash, false);
+            }
+        }
+
+        /* NAVIGATION logic */
+        function navigateTo(pageId, updateHash = true) {
+            activePage = pageId;
+            
+            // Hide all pages
+            document.querySelectorAll('.page-view').forEach(view => {
+                view.classList.add('hidden');
+            });
+
+            // Show active page
+            const activeElem = document.getElementById(`view-${pageId}`);
+            if (activeElem) {
+                activeElem.classList.remove('hidden');
+            }
+
+            // Update Desktop Nav Active States
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.dataset.page === pageId) {
+                    btn.classList.add('bg-fgreen-800', 'text-white');
+                    btn.classList.remove('text-fgreen-100');
+                } else {
+                    btn.classList.remove('bg-fgreen-800', 'text-white');
+                    btn.classList.add('text-fgreen-100');
+                }
+            });
+
+            // Scroll to top of view
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (updateHash) {
+                window.location.hash = pageId;
+            }
+        }
+
+        // Render Cards for Home
+        function renderFeaturedPlayers() {
+            const grid = document.getElementById('homePlayerGrid');
+            grid.innerHTML = PLAYERS_DATA.map(p => createPlayerCardHTML(p)).join('');
+        }
+
+        // Render Catalog Cards
+        function renderCatalogPlayers() {
+            const grid = document.getElementById('catalogPlayerGrid');
+            const empty = document.getElementById('emptyState');
+            const countLabel = document.getElementById('filteredResultsCount');
+
+            if (filteredPlayers.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                countLabel.textContent = 'Показано 0 игроков';
+            } else {
+                empty.classList.add('hidden');
+                grid.innerHTML = filteredPlayers.map(p => createPlayerCardHTML(p)).join('');
+                countLabel.textContent = `Показано ${filteredPlayers.length} из ${PLAYERS_DATA.length} легенд`;
+            }
+        }
+
+        // Template helper for Player Card
+        function createPlayerCardHTML(p) {
+            return `
+            <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-200 dark:border-slate-700 transition-all duration-300 transform hover:-translate-y-1.5 flex flex-col group">
+                <!-- Image Header with gradient overlay -->
+                <div class="relative h-64 overflow-hidden img-placeholder-bg">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    
+                    <span class="absolute top-3 right-3 bg-fgreen-900/90 text-fgreen-100 text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-md border border-fgreen-700/50">
+                        ${p.position}
+                    </span>
+                    <span class="absolute top-3 left-3 text-2xl" title="${p.country}">
+                        ${p.flag}
+                    </span>
+
+                    <div class="absolute bottom-3 left-3 right-3 text-white">
+                        <span class="text-[11px] font-semibold text-fgreen-300 uppercase tracking-widest block">${p.country}</span>
+                        <h3 class="text-xl font-bold font-serif leading-snug group-hover:text-fgreen-200 transition-colors">${p.name}</h3>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2 text-xs text-slate-600 dark:text-slate-300">
+                        <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-1.5">
+                            <span class="text-slate-400">Годы карьеры:</span>
+                            <span class="font-semibold text-fgreen-800 dark:text-fgreen-400">${p.years}</span>
+                        </div>
+                        <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-1.5">
+                            <span class="text-slate-400">Главные клубы:</span>
+                            <span class="font-medium truncate max-w-[150px] text-right" title="${p.clubs.join(', ')}">${p.clubs.slice(0,2).join(', ')}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400">Голы / Матчи:</span>
+                            <span class="font-bold text-slate-800 dark:text-white">${p.stats.careerGoals} / ${p.stats.careerMatches}</span>
+                        </div>
+                    </div>
+
+                    <!-- Button Detail Trigger -->
+                    <button onclick="openPlayerDetail('${p.id}')" class="w-full py-2.5 px-4 rounded-xl bg-fgreen-900 hover:bg-fgreen-800 text-white font-medium text-xs tracking-wide transition-colors flex items-center justify-center gap-2 shadow-sm group-hover:bg-fgreen-700">
+                        <span>Подробнее</span>
+                        <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+            `;
+        }
+
+        function openPlayerDetail(playerId, updateHash = true) {
+            const player = PLAYERS_DATA.find(p => p.id === playerId);
+            if (!player) return;
+
+            // Update Breadcrumb & Titles
+            document.getElementById('detailBreadcrumbName').textContent = player.name;
+            document.getElementById('detailFullName').textContent = player.fullName;
+            document.getElementById('infoboxHeaderName').textContent = player.name;
+            document.getElementById('infoboxNativeName').textContent = player.fullName;
+
+            // SubHeader badges
+            document.getElementById('detailSubHeader').innerHTML = `
+                <span class="bg-fgreen-100 dark:bg-fgreen-900/60 text-fgreen-800 dark:text-fgreen-200 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                    ${player.flag} ${player.country}
+                </span>
+                <span class="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-3 py-1 rounded-full text-xs font-semibold">
+                    ${player.position}
+                </span>
+                <span class="text-slate-500 dark:text-slate-400 text-xs font-medium">
+                    <i class="fa-solid fa-clock-rotate-left mr-1"></i>${player.years}
+                </span>
+            `;
+
+            // Biography & Image
+            document.getElementById('detailBio').textContent = player.bio;
+            document.getElementById('detailImage').src = player.image;
+            document.getElementById('detailImageCaption').textContent = `Энциклопедическая карточка: ${player.name}`;
+
+            // Quote
+            if (player.quote) {
+                document.getElementById('detailQuoteContainer').classList.remove('hidden');
+                document.getElementById('detailQuote').textContent = `«${player.quote}»`;
+            } else {
+                document.getElementById('detailQuoteContainer').classList.add('hidden');
+            }
+
+            // Infobox fields
+            document.getElementById('infoboxCountry').innerHTML = `${player.flag} ${player.country}`;
+            document.getElementById('infoboxDOB').textContent = player.dob;
+            document.getElementById('infoboxPosition').textContent = player.position;
+            document.getElementById('infoboxHeight').textContent = player.height;
+            document.getElementById('infoboxYears').textContent = player.years;
+            document.getElementById('infoboxNationalTeam').textContent = player.nationalTeam;
+            
+            document.getElementById('infoboxClubs').innerHTML = player.clubs.map(c => 
+                `<span class="bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-slate-700 dark:text-slate-200 border border-gray-200 dark:border-slate-600">${c}</span>`
+            ).join('');
+
+            // Stats Table
+            const ratio = (player.stats.careerGoals / player.stats.careerMatches).toFixed(2);
+            document.getElementById('detailStatsTableBody').innerHTML = `
+                <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                    <td class="px-4 py-3 font-semibold">Официальная карьера</td>
+                    <td class="px-4 py-3 text-center font-bold">${player.stats.careerMatches}</td>
+                    <td class="px-4 py-3 text-center font-bold text-fgreen-700 dark:text-fgreen-400">${player.stats.careerGoals}</td>
+                    <td class="px-4 py-3 text-center font-bold">${player.stats.careerAssists}</td>
+                    <td class="px-4 py-3 text-center">${ratio}</td>
+                </tr>
+                <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                    <td class="px-4 py-3 font-semibold">Лига Чемпионов УЕФА</td>
+                    <td class="px-4 py-3 text-center">—</td>
+                    <td class="px-4 py-3 text-center font-bold text-amber-600 dark:text-amber-400">${player.stats.uclGoals || '0'}</td>
+                    <td class="px-4 py-3 text-center">—</td>
+                    <td class="px-4 py-3 text-center">—</td>
+                </tr>
+                <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                    <td class="px-4 py-3 font-semibold">Сборная (${player.country})</td>
+                    <td class="px-4 py-3 text-center">—</td>
+                    <td class="px-4 py-3 text-center font-bold text-emerald-600 dark:text-emerald-400">${player.stats.intlGoals}</td>
+                    <td class="px-4 py-3 text-center">—</td>
+                    <td class="px-4 py-3 text-center">—</td>
+                </tr>
+            `;
+
+            // Trophies List
+            document.getElementById('detailTrophiesList').innerHTML = player.trophies.map(t => `
+                <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-gray-200 dark:border-slate-700 flex items-center gap-3 text-sm font-medium">
+                    <i class="fa-solid fa-trophy text-amber-500 text-lg shrink-0"></i>
+                    <span>${t}</span>
+                </div>
+            `).join('');
+
+            // Facts List
+            document.getElementById('detailFactsList').innerHTML = player.facts.map(f => `
+                <li class="pl-1">${f}</li>
+            `).join('');
+
+            // Navigate to detail view
+            navigateTo('player-detail', false);
+
+            if (updateHash) {
+                window.location.hash = `player/${player.id}`;
+            }
+        }
+
+        function applyFilters() {
+            const pos = document.getElementById('filterPosition').value;
+            const country = document.getElementById('filterCountry').value;
+            const era = document.getElementById('filterEra').value;
+            const club = document.getElementById('filterClub').value;
+
+            filteredPlayers = PLAYERS_DATA.filter(player => {
+                const matchPos = (pos === 'all') || (player.position === pos);
+                const matchCountry = (country === 'all') || (player.country === country);
+                const matchEra = (era === 'all') || (player.era === era);
+                const matchClub = (club === 'all') || (player.clubs.some(c => c.includes(club)));
+
+                return matchPos && matchCountry && matchEra && matchClub;
+            });
+
+            renderCatalogPlayers();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterPosition').value = 'all';
+            document.getElementById('filterCountry').value = 'all';
+            document.getElementById('filterEra').value = 'all';
+            document.getElementById('filterClub').value = 'all';
+            
+            const globalSearch = document.getElementById('globalSearchInput');
+            if (globalSearch) globalSearch.value = '';
+
+            filteredPlayers = [...PLAYERS_DATA];
+            renderCatalogPlayers();
+        }
+
+        function filterByEraShortcut(eraValue) {
+            navigateTo('players');
+            document.getElementById('filterEra').value = eraValue;
+            applyFilters();
+        }
+
+        /* GLOBAL SEARCH WITH AUTOCOMPLETE DROPDOWN */
+        function handleGlobalSearch(query) {
+            const suggestions = document.getElementById('searchSuggestions');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const cleanQuery = query.trim().toLowerCase();
+
+            if (cleanQuery.length > 0 && clearBtn) {
+                clearBtn.classList.remove('hidden');
+            } else if (clearBtn) {
+                clearBtn.classList.add('hidden');
+            }
+
+            if (!cleanQuery) {
+                suggestions.classList.add('hidden');
+                return;
+            }
+
+            const matches = PLAYERS_DATA.filter(p => 
+                p.name.toLowerCase().includes(cleanQuery) ||
+                p.fullName.toLowerCase().includes(cleanQuery) ||
+                p.country.toLowerCase().includes(cleanQuery) ||
+                p.clubs.some(c => c.toLowerCase().includes(cleanQuery))
+            );
+
+            if (matches.length > 0) {
+                suggestions.innerHTML = matches.map(p => `
+                    <div onclick="selectSearchResult('${p.id}')" class="p-3 hover:bg-fgreen-50 dark:hover:bg-slate-700 cursor-pointer flex items-center justify-between transition-colors">
+                        <div class="flex items-center gap-3">
+                            <img src="${p.image}" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=100&q=80'">
+                            <div>
+                                <div class="font-bold text-sm text-slate-800 dark:text-white">${p.name}</div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">${p.country} • ${p.position}</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                    </div>
+                `).join('');
+                suggestions.classList.remove('hidden');
+            } else {
+                suggestions.innerHTML = `
+                    <div class="p-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                        Ничего не найдено по запросу «${query}»
+                    </div>
+                `;
+                suggestions.classList.remove('hidden');
+            }
+        }
+
+        function selectSearchResult(playerId) {
+            document.getElementById('searchSuggestions').classList.add('hidden');
+            openPlayerDetail(playerId);
+        }
+
+        function clearSearch() {
+            document.getElementById('globalSearchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            document.getElementById('searchSuggestions').classList.add('hidden');
+        }
+
+        // Close search dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const suggestions = document.getElementById('searchSuggestions');
+            const searchInput = document.getElementById('globalSearchInput');
+            if (suggestions && !suggestions.contains(e.target) && e.target !== searchInput) {
+                suggestions.classList.add('hidden');
+            }
+        });
+
+        function renderClubs() {
+            const grid = document.getElementById('clubsGrid');
+            grid.innerHTML = CLUBS_DATA.map(c => `
+                <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm border border-gray-200 dark:border-slate-700 flex flex-col justify-between">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${c.image}" alt="${c.name}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                        <div class="absolute bottom-3 left-4 right-4 text-white">
+                            <span class="text-xs text-fgreen-300 uppercase tracking-widest font-semibold">${c.country}</span>
+                            <h3 class="text-2xl font-bold font-serif">${c.name}</h3>
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-light">${c.description}</p>
+                        <div class="text-xs space-y-1.5 pt-2 border-t border-gray-100 dark:border-slate-700">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Год основания:</span>
+                                <span class="font-semibold text-slate-800 dark:text-slate-200">${c.founded}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Титулы / Достижения:</span>
+                                <span class="font-bold text-fgreen-800 dark:text-fgreen-400">${c.uclTitles}</span>
+                            </div>
+                            <div class="pt-2">
+                                <span class="text-slate-400 block mb-1">Легенды клуба:</span>
+                                <div class="flex flex-wrap gap-1">
+                                    ${c.legends.map(l => `<span class="bg-fgreen-50 dark:bg-slate-700 text-fgreen-900 dark:text-fgreen-200 px-2 py-0.5 rounded text-[11px] font-medium border border-fgreen-200 dark:border-slate-600">${l}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTeams() {
+            const grid = document.getElementById('teamsGrid');
+            grid.innerHTML = TEAMS_DATA.map(t => `
+                <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm border border-gray-200 dark:border-slate-700 flex flex-col justify-between">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${t.image}" alt="${t.name}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                        <div class="absolute bottom-3 left-4 right-4 text-white flex items-center justify-between">
+                            <div>
+                                <h3 class="text-2xl font-bold font-serif">${t.name}</h3>
+                                <span class="text-xs text-fgreen-300 font-semibold">${t.wcTitles}</span>
+                            </div>
+                            <span class="text-4xl">${t.flag}</span>
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-light">${t.desc}</p>
+                        <div class="text-xs space-y-1.5 pt-2 border-t border-gray-100 dark:border-slate-700">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Годы побед:</span>
+                                <span class="font-semibold text-slate-800 dark:text-slate-200">${t.years}</span>
+                            </div>
+                            <div class="pt-2">
+                                <span class="text-slate-400 block mb-1">Ключевые игроки:</span>
+                                <span class="font-medium text-fgreen-800 dark:text-fgreen-400">${t.keyPlayers}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* RANDOM PLAYER TRIGGER */
+        function showRandomPlayer() {
+            const randomIndex = Math.floor(Math.random() * PLAYERS_DATA.length);
+            openPlayerDetail(PLAYERS_DATA[randomIndex].id);
+        }
+
+        /* Theme Toggle Logic */
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Apply saved theme on load
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        /* Mobile Menu Toggle */
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const openIcon = document.getElementById('menuOpenIcon');
+            const closeIcon = document.getElementById('menuCloseIcon');
+
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                openIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+                openIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        }
+
+        /* Back to top scroll listener */
+        function setupScrollListener() {
+            const backBtn = document.getElementById('backToTopBtn');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 400) {
+                    backBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                } else {
+                    backBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+                }
+            });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
